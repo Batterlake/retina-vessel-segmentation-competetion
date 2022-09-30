@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+CONFIG_FILE=$1
+DATA_FOLDER=$2
+DEVICE=$3
+
+if [ -z $DEVICE ] 
+then
+    DEVICE=4
+fi
+
+CUDA_VISIBLE_DEVICES=$DEVICE CUDA_DEVICE_ORDER=PCI_BUS_ID python eval.py -c $CONFIG_FILE -df $DATA_FOLDER

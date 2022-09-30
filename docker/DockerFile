@@ -1,0 +1,42 @@
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
+
+# UPDATE UPGRADE
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+
+RUN apt-get update -y && apt upgrade -y
+RUN apt-get update --fix-missing
+
+# BASIC
+RUN apt-get install -y locales && locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+# PYTHON 
+RUN apt install -y software-properties-common 
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update
+
+#RUN apt install -y python3-distutils python3-apt
+RUN apt install -y python3.9-distutils
+
+RUN apt-get install -y python3.9
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+RUN ["python", "-V"]
+RUN mkdir /install_python
+WORKDIR /install_python
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.9 get-pip.py
+RUN python -m pip install --upgrade pip
+
+# ML LIBS
+RUN pip install tensorflow==2.9.0
+RUN pip install pandas opencv-contrib-python-headless==4.5.4.60 cryptography absl-py scipy joblib
+RUN pip install -U scikit-learn scikit-image
+
+# JUPYTER
+RUN pip install notebook
+
+RUN pip install segementation_models tensorflow_addons albumentations pandas matplotlib pillow tqdm

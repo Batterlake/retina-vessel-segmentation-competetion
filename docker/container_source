@@ -1,0 +1,8 @@
+CONTAINER_NAME=gorai-playground
+CONTAINER_DEVICE="all"
+CONTAINER_IMAGE_NAME=gorai/competition:modelling
+CONTAINER_HOME=/workspace
+MY_MOUNTS="-v /mnt:/mnt"
+CONTAINER_MOUNTS="-v $(pwd)/../:/workspace"
+CONTAINER_PORT_MAPPINGS="-p 21000:22 -p 21001-21009:21001-21009"
+JUPYTER_PORT=21001
