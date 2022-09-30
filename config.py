@@ -16,18 +16,18 @@ def get_timestamp():
 @dataclass
 class Config:
     SEED: int = 777
-    TRAIN_IMAGE_SIZE: int = 1024
+    TRAIN_IMAGE_SIZE: int = 800
     INFER_IMAGE_SIZE: int = 1632
     EPOCHS: int = 300
-    TRAIN_FOLDER: str = f"datasets/3-annotated/train"
-    VALID_FOLDER: str = f"datasets/3-annotated/valid"
+    TRAIN_FOLDER: str = f"datasets/1-basic/train"
+    VALID_FOLDER: str = f"datasets/1-basic/valid"
     INFER_FOLDER: str = f"datasets/infer"
     BACKBONE: str = "resnet34"
     N_CLASSES: int = 2
     ACTIVATION: str = "softmax"
     NUM_WORKERS: int = tf.data.AUTOTUNE
     PREFETCH_BUFFER: int = tf.data.AUTOTUNE
-    TRAIN_BATCH_SIZE: int = 1
+    TRAIN_BATCH_SIZE: int = 4
     INFER_BATCH_SIZE: int = 1
     LR: float = 1e-4
     MAX_LR: float = 2e-3

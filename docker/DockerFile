@@ -28,15 +28,15 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 RUN ["python", "-V"]
 RUN mkdir /install_python
 WORKDIR /install_python
+RUN apt install -y curl
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.9 get-pip.py
 RUN python -m pip install --upgrade pip
 
 # ML LIBS
 RUN pip install tensorflow==2.9.0
-RUN pip install pandas opencv-contrib-python-headless==4.5.4.60 cryptography absl-py scipy joblib
+RUN pip install pandas opencv-contrib-python-headless cryptography absl-py scipy joblib
 RUN pip install -U scikit-learn scikit-image
 
 # JUPYTER
 RUN pip install notebook
-
-RUN pip install segementation_models tensorflow_addons albumentations pandas matplotlib pillow tqdm
+RUN pip install segmentation_models tensorflow_addons albumentations pandas matplotlib pillow tqdm

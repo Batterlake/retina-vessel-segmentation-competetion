@@ -1,4 +1,4 @@
-CONTAINER_NAME=gorai-playground
+CONTAINER_NAME=gorai-playground-showcase
 CONTAINER_DEVICE="all"
 CONTAINER_IMAGE_NAME=gorai/competition:modelling
 CONTAINER_HOME=/workspace

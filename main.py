@@ -9,6 +9,7 @@ from keras.callbacks import (
     CSVLogger,
     EarlyStopping,
     ModelCheckpoint,
+    ReduceLROnPlateau,
     TensorBoard,
 )
 from keras.losses import Loss
@@ -65,6 +66,16 @@ def get_callbacks(path_to_weights, path_to_csv, path_to_tb) -> List[Callback]:
             separator="\t",
         ),
         TensorBoard(path_to_tb),
+        # ReduceLROnPlateau(
+        #     monitor="val_loss",
+        #     factor=0.5,
+        #     patience=10,
+        #     verbose=0,
+        #     mode="auto",
+        #     min_delta=0.0001,
+        #     cooldown=0,
+        #     min_lr=5e-5,
+        # ),
     ]
 
 

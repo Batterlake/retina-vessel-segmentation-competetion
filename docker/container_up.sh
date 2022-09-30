@@ -15,9 +15,4 @@ docker run \
         -w "$CONTAINER_HOME" \
         -e LANG=C.UTF-8 \
         --shm-size=2gb \
-        ${CONTAINER_IMAGE_NAME} /bin/bash -c "service ssh start && sleep inf"
-
-#docker exec $CONTAINER_NAME service ssh start
-#docker exec $CONTAINER_NAME echo 'root:root' | chpasswd
-
-#-v /home/gorai/workspace/course_workspace:/workspace:z
+        ${CONTAINER_IMAGE_NAME} /bin/bash -c "sleep inf"
