@@ -43,16 +43,24 @@ def get_tf_dataset(
 def get_optimizer(
     steps_per_epoch, init_lr, max_lr, reduction=1.2, factor=8
 ) -> Optimizer:
-    clr = tfa.optimizers.CyclicalLearningRate(
-        initial_learning_rate=init_lr,
-        maximal_learning_rate=max_lr,
-        scale_fn=lambda x: 1 / (reduction ** (x - 1)),
-        step_size=factor * steps_per_epoch,
-    )
-    return tf.keras.optimizers.Adam(clr)
+    # clr = tfa.optimizers.CyclicalLearningRate(
+    #     initial_learning_rate=init_lr,
+    #     maximal_learning_rate=max_lr,
+    #     scale_fn=lambda x: 1 / (reduction ** (x - 1)),
+    #     step_size=factor * steps_per_epoch,
+    # )
+    # return tf.keras.optimizers.Adam(clr)
+
+    return tf.keras.optimizers.Adam(init_lr)
 
 
-def get_callbacks(path_to_weights, path_to_csv, path_to_tb) -> List[Callback]:
+def get_callbacks(
+    path_to_weights,
+    path_to_csv,
+    path_to_tb,
+    cp_monitor: str = "val_loss",
+    cp_mode: str = "min",
+) -> List[Callback]:
     return [
         EarlyStopping(patience=200, restore_best_weights=True, verbose=1),
         ModelCheckpoint(
@@ -60,22 +68,24 @@ def get_callbacks(path_to_weights, path_to_csv, path_to_tb) -> List[Callback]:
             save_best_only=True,
             save_weights_only=True,
             verbose=1,
+            monitor=cp_monitor,
+            mode=cp_mode,
         ),
         CSVLogger(
             path_to_csv,
             separator="\t",
         ),
         TensorBoard(path_to_tb),
-        # ReduceLROnPlateau(
-        #     monitor="val_loss",
-        #     factor=0.5,
-        #     patience=10,
-        #     verbose=0,
-        #     mode="auto",
-        #     min_delta=0.0001,
-        #     cooldown=0,
-        #     min_lr=5e-5,
-        # ),
+        ReduceLROnPlateau(
+            monitor=cp_monitor,
+            factor=0.9,
+            patience=10,
+            verbose=0,
+            mode=cp_mode,
+            min_delta=0.0001,
+            cooldown=0,
+            min_lr=5e-5,
+        ),
     ]
 
 
@@ -144,7 +154,13 @@ if __name__ == "__main__":
         steps_per_epoch, C.LR, C.MAX_LR, reduction=C.REDUCTION, factor=C.FACTOR
     )
 
-    callbacks = get_callbacks(C.WEIGHTS, C.LOGS_CSV, C.LOGS_TB)
+    callbacks = get_callbacks(
+        C.WEIGHTS,
+        C.LOGS_CSV,
+        C.LOGS_TB,
+        cp_monitor=C.MONITOR_METRIC,
+        cp_mode=C.METRIC_MODE,
+    )
     C.dump()
     try:
         model.compile(optimizer, total_loss, metrics=metrics)
