@@ -27,7 +27,7 @@ def parse_args():
 
 
 def predict(image, model, preprocess):
-    patches_tensor = tf.convert_to_tensor(image)
+    patches_tensor = tf.convert_to_tensor(image, dtype=tf.float32)
     if len(patches_tensor.shape) == 3:
         patches_tensor = tf.expand_dims(patches_tensor, axis=0)
     patches_tensor = preprocess(patches_tensor)

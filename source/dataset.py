@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 import albumentations as A
+import numpy as np
 import tensorflow as tf
 
 
@@ -73,8 +74,21 @@ class StageDataset:
         return len(self.filenames)
 
 
-def get_data_generator(stage_data: StageDataset, preprocessing, mask_key="mask_onehot"):
-    for item in iter(stage_data):
+def get_data_generator(
+    stage_data: StageDataset, preprocessing, mask_key="mask_onehot", mode="train"
+):
+
+    if mode == "train":
+        indices = np.random.choice(
+            np.arange(len(stage_data)),
+            size=np.min([200, len(stage_data)]),
+            replace=False,
+        )
+    else:
+        indices = np.arange(len(stage_data))
+    # for item in iter(stage_data):
+    for index in indices:
+        item = stage_data[index]
         image = preprocessing(item["image"])
         mask = item[mask_key]
         yield image, mask
@@ -91,7 +105,8 @@ def get_train_data(
     images = set(glob_filenames(f"{stage_folder}/images", "png"))
     masks = set(glob_filenames(f"{stage_folder}/masks", "png"))
     images_w_masks = sorted(
-        list(images.intersection(masks)), key=lambda x: int(x.split(".")[0])
+        list(images.intersection(masks)),
+        key=lambda x: int(x.split(".")[0].replace("_", "").replace(" ", "")),
     )
     stage_ds = StageDataset(stage_folder, images_w_masks, None, transform=transform)
     return stage_ds
@@ -102,7 +117,10 @@ def get_test_data(
     transform: Optional[A.Compose] = None,
 ):
     images = set(glob_filenames(f"{stage_folder}/images", "png"))
-    images = sorted(list(images), key=lambda x: int(x.split(".")[0]))
+    images = sorted(
+        list(images),
+        key=lambda x: int(x.split(".")[0].replace("_", "").replace(" ", "")),
+    )
     return StageDataset(stage_folder, images, None, transform=transform, train=False)
 
 
@@ -143,7 +161,9 @@ def create_tv_datasets(
 ):
     train_dataset = (
         tf.data.Dataset.from_generator(
-            lambda: get_data_generator(train_data, preprocessing=preprocessing),
+            lambda: get_data_generator(
+                train_data, preprocessing=preprocessing, mode="train"
+            ),
             output_types=(tf.float32, tf.float32),
             output_shapes=(
                 [train_input_size, train_input_size, 3],
@@ -157,7 +177,9 @@ def create_tv_datasets(
 
     valid_dataset = (
         tf.data.Dataset.from_generator(
-            lambda: get_data_generator(valid_data, preprocessing=preprocessing),
+            lambda: get_data_generator(
+                valid_data, preprocessing=preprocessing, mode="valid"
+            ),
             output_types=(tf.float32, tf.float32),
             output_shapes=(
                 [valid_input_size, valid_input_size, 3],
