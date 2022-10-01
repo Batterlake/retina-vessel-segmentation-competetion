@@ -15,24 +15,26 @@ def get_timestamp():
 
 @dataclass
 class Config:
-    SEED: int = 777
+    SEED: int = 42
     TRAIN_IMAGE_SIZE: int = 1024
     INFER_IMAGE_SIZE: int = 1632
     EPOCHS: int = 300
-    TRAIN_FOLDER: str = f"datasets/3-annotated/train"
-    VALID_FOLDER: str = f"datasets/3-annotated/valid"
+    TRAIN_FOLDER: str = f"datasets/5-augmented/train"
+    VALID_FOLDER: str = f"datasets/5-augmented/valid"
     INFER_FOLDER: str = f"datasets/infer"
-    BACKBONE: str = "resnet34"
+    BACKBONE: str = "efficientnetb0"
     N_CLASSES: int = 2
     ACTIVATION: str = "softmax"
     NUM_WORKERS: int = tf.data.AUTOTUNE
     PREFETCH_BUFFER: int = tf.data.AUTOTUNE
-    TRAIN_BATCH_SIZE: int = 1
+    TRAIN_BATCH_SIZE: int = 4
     INFER_BATCH_SIZE: int = 1
-    LR: float = 1e-4
+    LR: float = 1e-3
     MAX_LR: float = 2e-3
     REDUCTION: float = 2
-    FACTOR: int = 6
+    FACTOR: int = 5
+    MONITOR_METRIC: str = "val_f1-score"
+    METRIC_MODE: str = "max"
     EXPERIMENTS_FOLDER: str = "experiments/"
     MODEL_TYPE: str = "unet"
     EXPERIMENT_NAME: Optional[str] = None
